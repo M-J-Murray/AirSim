@@ -198,6 +198,13 @@ public: //types
     };
 
     struct DistanceSetting : SensorSetting {
+		real_T min_distance = 0.1;
+		real_T max_distance = 180.0;
+		real_T accuracy = 0.01;
+		uint update_frequency = 10000;
+
+		Vector3r position = VectorMath::nanVector();
+		Rotation rotation = Rotation::nanRotation();
     };
 
     struct LidarSetting : SensorSetting {
@@ -1124,10 +1131,13 @@ private:
 
     static void initializeDistanceSetting(DistanceSetting& distance_setting, const Settings& settings_json)
     {
-        unused(distance_setting);
-        unused(settings_json);
+		distance_setting.min_distance = settings_json.getInt("MinDistance", distance_setting.min_distance);
+		distance_setting.max_distance = settings_json.getFloat("MaxDistance", distance_setting.max_distance);
+		distance_setting.accuracy = settings_json.getInt("Accuracy", distance_setting.accuracy);
+		distance_setting.update_frequency = settings_json.getInt("UpdateFrequency", distance_setting.update_frequency);
 
-        //TODO: set from json as needed
+		distance_setting.position = createVectorSetting(settings_json, distance_setting.position);
+		distance_setting.rotation = createRotationSetting(settings_json, distance_setting.rotation);
     }
 
     static void initializeLidarSetting(LidarSetting& lidar_setting, const Settings& settings_json)

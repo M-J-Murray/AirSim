@@ -12,36 +12,46 @@ namespace msr { namespace airlib {
 
 
 struct DistanceSimpleParams {
-    real_T min_distance = 20.0f / 100; //m
-    real_T max_distance = 4000.0f / 100; //m
-    Pose relative_pose;
+	real_T min_distance = 0.1; //cm
+	real_T max_distance = 180; //cm
+	real_T accuracy = 0.01; // Percentage
+	real_T update_frequency = 10000; //Hz
 
-/*
-    Ref: A Stochastic Approach to Noise Modeling for Barometric Altimeters
-     Angelo Maria Sabatini* and Vincenzo Genovese
-     Sample values are from Table 1
-     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3871085/
-     This is however not used because numbers mentioned in paper doesn't match experiments.
+	Pose relative_pose{
+		Vector3r(0,0,0.19),					// x, y, z location
+		VectorMath::toQuaternion(
+			Utils::degreesToRadians(-90),	//pitch - rotation around Y axis
+			Utils::degreesToRadians(0),		//roll  - rotation around X axis
+			Utils::degreesToRadians(0)		//yaw   - rotation around Z axis
+		)
+	};
 
-     real_T correlated_noise_sigma = 0.27f;
-     real_T correlated_noise_tau = 0.87f;
-     real_T unnorrelated_noise_sigma = 0.24f;
+	real_T update_latency = 0.0f;    //sec
+	real_T startup_delay = 0;        //sec
 
-*/
-    //TODO: update sigma based on documentation, maybe as a function increasing with measured distance
-    real_T unnorrelated_noise_sigma = 0.002f * 100;
-    //jMavSim uses below
-    //real_T unnorrelated_noise_sigma = 0.1f;
+	void initializeFromSettings(const AirSimSettings::DistanceSetting& settings)
+	{
+		min_distance = settings.min_distance;
+		max_distance = settings.max_distance;
+		accuracy = settings.accuracy;
+		update_frequency = settings.update_frequency;
 
-    //see PX4 param reference for EKF: https://dev.px4.io/en/advanced/parameter_reference.html
-    real_T update_latency = 0.0f;    //sec
-    real_T update_frequency = 50;    //Hz
-    real_T startup_delay = 0;        //sec
+		float x, y, z;
+		x = !std::isnan(settings.position.x()) ? settings.position.x() : 0;
+		y = !std::isnan(settings.position.y()) ? settings.position.y() : 0;
+		z = !std::isnan(settings.position.z()) ? settings.position.z() : 0;
+		relative_pose.position = Vector3r(x, y, z);
 
-    void initializeFromSettings(const AirSimSettings::DistanceSetting& settings)
-    {
-        unused(settings);
-    }
+		float pitch, roll, yaw;
+		pitch = !std::isnan(settings.rotation.pitch) ? settings.rotation.pitch : 0;
+		roll = !std::isnan(settings.rotation.roll) ? settings.rotation.roll : 0;
+		yaw = !std::isnan(settings.rotation.yaw) ? settings.rotation.yaw : 0;
+		relative_pose.orientation = VectorMath::toQuaternion(
+			Utils::degreesToRadians(pitch),   //pitch - rotation around Y axis
+			Utils::degreesToRadians(roll),    //roll  - rotation around X axis
+			Utils::degreesToRadians(yaw)	  //yaw   - rotation around Z axis
+		);   
+	}
 };
 
 

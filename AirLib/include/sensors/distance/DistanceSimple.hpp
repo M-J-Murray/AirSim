@@ -22,9 +22,8 @@ public:
         // initialize params
         params_.initializeFromSettings(setting);
 
-        uncorrelated_noise_ = RandomGeneratorGausianR(0.0f, params_.unnorrelated_noise_sigma);
-        //correlated_noise_.initialize(params_.correlated_noise_tau, params_.correlated_noise_sigma, 0.0f);
-
+		real_T sigma = (params_.accuracy * 2) / 6;
+		uncorrelated_noise_ = RandomGeneratorGausianR(1.0f, sigma);
 
         //initialize frequency limiter
         freq_limiter_.initialize(params_.update_frequency, params_.startup_delay);
@@ -79,16 +78,16 @@ private: //methods
         const GroundTruth& ground_truth = getGroundTruth();
 
         //order of Pose addition is important here because it also adds quaternions which is not commutative!
-        auto distance = getRayLength(params_.relative_pose + ground_truth.kinematics->pose);
+		auto distance = getRayLength(params_.relative_pose + ground_truth.kinematics->pose);
 
-        //add noise in distance (about 0.2m sigma)
-        distance += uncorrelated_noise_.next();
+		// apply noise
+		distance += distance * uncorrelated_noise_.next();
 
-        output.distance = distance;
-        output.min_distance = params_.min_distance;
-        output.max_distance = params_.max_distance;
-        output.relative_pose = params_.relative_pose;
-        output.time_stamp = clock()->nowNanos();
+		output.distance = distance;
+		output.min_distance = params_.min_distance;
+		output.max_distance = params_.max_distance;
+		output.relative_pose = params_.relative_pose;
+		output.time_stamp = clock()->nowNanos();
 
         return output;
     }

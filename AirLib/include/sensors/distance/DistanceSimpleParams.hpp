@@ -12,13 +12,13 @@ namespace msr { namespace airlib {
 
 
 struct DistanceSimpleParams {
-	real_T min_distance = 0.1; //cm
-	real_T max_distance = 180; //cm
-	real_T accuracy = 0.01; // Percentage
-	real_T update_frequency = 10000; //Hz
+	real_T min_distance = 0.1f; // meters
+	real_T max_distance = 180.0f; // meters
+	real_T accuracy = 0.01f; // Percentage
+	uint update_frequency = 10000; //Hz
 
 	Pose relative_pose{
-		Vector3r(0,0,0.19),					// x, y, z location
+		Vector3r(0, 0, 0.19),					// x, y, z location
 		VectorMath::toQuaternion(
 			Utils::degreesToRadians(-90),	//pitch - rotation around Y axis
 			Utils::degreesToRadians(0),		//roll  - rotation around X axis
@@ -27,12 +27,12 @@ struct DistanceSimpleParams {
 	};
 
 	real_T update_latency = 0.0f;    //sec
-	real_T startup_delay = 0;        //sec
+	real_T startup_delay = 0.0f;     //sec
 
 	void initializeFromSettings(const AirSimSettings::DistanceSetting& settings)
 	{
-		min_distance = settings.min_distance;
-		max_distance = settings.max_distance;
+		min_distance = settings.min_distance * 100; // Convert to cm
+		max_distance = settings.max_distance * 100; // Convert to cm
 		accuracy = settings.accuracy;
 		update_frequency = settings.update_frequency;
 

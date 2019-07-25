@@ -19,9 +19,9 @@ public:
 public: //types
     struct Output {
         TTimePoint time_stamp;
-        real_T distance;    //meters
-        real_T min_distance;//meters
-        real_T max_distance;//meters
+        real_T distance;    //cm
+        real_T min_distance;//cm
+        real_T max_distance;//cm
         Pose relative_pose;
     };
 

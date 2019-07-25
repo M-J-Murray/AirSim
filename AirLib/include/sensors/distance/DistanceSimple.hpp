@@ -80,8 +80,8 @@ private: //methods
         //order of Pose addition is important here because it also adds quaternions which is not commutative!
 		auto distance = getRayLength(params_.relative_pose + ground_truth.kinematics->pose);
 
-		// apply noise
-		distance += distance * uncorrelated_noise_.next();
+		// apply noise and convert to cm
+		distance += distance * 100 * uncorrelated_noise_.next();
 
 		output.distance = distance;
 		output.min_distance = params_.min_distance;

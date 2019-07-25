@@ -198,9 +198,9 @@ public: //types
     };
 
     struct DistanceSetting : SensorSetting {
-		real_T min_distance = 0.1;
-		real_T max_distance = 180.0;
-		real_T accuracy = 0.01;
+		float min_distance = 0.1f; //meters
+		float max_distance = 180.0f; //meters
+		float accuracy = 0.01f; //meters
 		uint update_frequency = 10000;
 
 		Vector3r position = VectorMath::nanVector();
@@ -1131,9 +1131,9 @@ private:
 
     static void initializeDistanceSetting(DistanceSetting& distance_setting, const Settings& settings_json)
     {
-		distance_setting.min_distance = settings_json.getInt("MinDistance", distance_setting.min_distance);
+		distance_setting.min_distance = settings_json.getFloat("MinDistance", distance_setting.min_distance);
 		distance_setting.max_distance = settings_json.getFloat("MaxDistance", distance_setting.max_distance);
-		distance_setting.accuracy = settings_json.getInt("Accuracy", distance_setting.accuracy);
+		distance_setting.accuracy = settings_json.getFloat("Accuracy", distance_setting.accuracy);
 		distance_setting.update_frequency = settings_json.getInt("UpdateFrequency", distance_setting.update_frequency);
 
 		distance_setting.position = createVectorSetting(settings_json, distance_setting.position);

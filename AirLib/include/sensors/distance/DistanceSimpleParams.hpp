@@ -18,11 +18,11 @@ struct DistanceSimpleParams {
 	uint update_frequency = 10000; //Hz
 
 	Pose relative_pose{
-		Vector3r(0, 0, 0.19),					// x, y, z location
+		Vector3r(0, 0, 0.19f),					// x, y, z location
 		VectorMath::toQuaternion(
-			Utils::degreesToRadians(-90),	//pitch - rotation around Y axis
-			Utils::degreesToRadians(0),		//roll  - rotation around X axis
-			Utils::degreesToRadians(0)		//yaw   - rotation around Z axis
+			Utils::degreesToRadians(-90.0f),	//pitch - rotation around Y axis
+			Utils::degreesToRadians(0.0f),		//roll  - rotation around X axis
+			Utils::degreesToRadians(0.0f)		//yaw   - rotation around Z axis
 		)
 	};
 
@@ -37,15 +37,15 @@ struct DistanceSimpleParams {
 		update_frequency = settings.update_frequency;
 
 		float x, y, z;
-		x = !std::isnan(settings.position.x()) ? settings.position.x() : 0;
-		y = !std::isnan(settings.position.y()) ? settings.position.y() : 0;
-		z = !std::isnan(settings.position.z()) ? settings.position.z() : 0;
+		x = !std::isnan(settings.position.x()) ? settings.position.x() : 0.0f;
+		y = !std::isnan(settings.position.y()) ? settings.position.y() : 0.0f;
+		z = !std::isnan(settings.position.z()) ? settings.position.z() : 0.19f;
 		relative_pose.position = Vector3r(x, y, z);
 
 		float pitch, roll, yaw;
-		pitch = !std::isnan(settings.rotation.pitch) ? settings.rotation.pitch : 0;
-		roll = !std::isnan(settings.rotation.roll) ? settings.rotation.roll : 0;
-		yaw = !std::isnan(settings.rotation.yaw) ? settings.rotation.yaw : 0;
+		pitch = !std::isnan(settings.rotation.pitch) ? settings.rotation.pitch : -90.0f;
+		roll = !std::isnan(settings.rotation.roll) ? settings.rotation.roll : 0.0f;
+		yaw = !std::isnan(settings.rotation.yaw) ? settings.rotation.yaw : 0.0f;
 		relative_pose.orientation = VectorMath::toQuaternion(
 			Utils::degreesToRadians(pitch),   //pitch - rotation around Y axis
 			Utils::degreesToRadians(roll),    //roll  - rotation around X axis

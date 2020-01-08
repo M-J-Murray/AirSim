@@ -37,11 +37,6 @@ public:
     virtual bool armDisarm(bool arm) = 0;
     virtual GeoPoint getHomeGeoPoint() const = 0;
 
-    //default implementation so derived class doesn't have to call on UpdatableObject
-    virtual void reset() override
-    {
-        UpdatableObject::reset();
-    }
     virtual void update() override
     {
         UpdatableObject::update();
@@ -51,9 +46,15 @@ public:
     {
         //if derived class supports async task then override this method
     }
+
     virtual bool isReady(std::string& message) const
     {
         unused(message);
+        return true;
+    }
+
+    virtual bool canArm() const
+    {
         return true;
     }
 
@@ -94,6 +95,7 @@ public:
         static const RCData invalid_rc_data {};
         return invalid_rc_data;
     }
+
     //set external RC data to vehicle (if unsupported then returns false)
     virtual bool setRCData(const RCData& rc_data)
     {
@@ -110,24 +112,20 @@ public:
     // Lidar APIs
     virtual LidarData getLidarData(const std::string& lidar_name) const
     {
-        const LidarBase* lidar = nullptr;
-
-        // Find lidar with the given name (for empty input name, return the first one found)
-        // Not efficient but should suffice given small number of lidars
-        uint count_lidars = getSensors().size(SensorBase::SensorType::Lidar);
-        for (uint i = 0; i < count_lidars; i++)
-        {
-            const LidarBase* current_lidar = static_cast<const LidarBase*>(getSensors().getByType(SensorBase::SensorType::Lidar, i));
-            if (current_lidar != nullptr && (current_lidar->getName() == lidar_name || lidar_name == ""))
-            {
-                lidar = current_lidar;
-                break;
-            }
-        }
+        auto *lidar = findLidarByName(lidar_name);
         if (lidar == nullptr)
             throw VehicleControllerException(Utils::stringf("No lidar with name %s exist on vehicle", lidar_name.c_str()));
 
         return lidar->getOutput();
+    }
+
+    virtual vector<int> getLidarSegmentation(const std::string& lidar_name) const
+    {
+        auto *lidar = findLidarByName(lidar_name);
+        if (lidar == nullptr)
+            throw VehicleControllerException(Utils::stringf("No lidar with name %s exist on vehicle", lidar_name.c_str()));
+
+        return lidar->getSegmentationOutput();
     }
 
     // IMU API
@@ -260,6 +258,27 @@ public:
             : VehicleControllerException(message) {
         }
     };
+
+    private:
+    const LidarBase* findLidarByName(const std::string& lidar_name) const
+    {
+        const LidarBase* lidar = nullptr;
+
+        // Find lidar with the given name (for empty input name, return the first one found)
+        // Not efficient but should suffice given small number of lidars
+        uint count_lidars = getSensors().size(SensorBase::SensorType::Lidar);
+        for (uint i = 0; i < count_lidars; i++)
+        {
+            const LidarBase* current_lidar = static_cast<const LidarBase*>(getSensors().getByType(SensorBase::SensorType::Lidar, i));
+            if (current_lidar != nullptr && (current_lidar->getName() == lidar_name || lidar_name == ""))
+            {
+                lidar = current_lidar;
+                break;
+            }
+        }
+
+        return lidar;
+    }
 };
 
 

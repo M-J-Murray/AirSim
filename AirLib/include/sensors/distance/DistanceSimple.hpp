@@ -31,13 +31,10 @@ public:
     }
 
     //*** Start: UpdatableState implementation ***//
-    virtual void reset() override
+    virtual void resetImplementation() override
     {
-        DistanceBase::reset();
-
         //correlated_noise_.reset();
         uncorrelated_noise_.reset();
-
 
         freq_limiter_.reset();
         delay_line_.reset();

@@ -219,6 +219,11 @@ void RpcLibClientBase::simSetVehiclePose(const Pose& pose, bool ignore_collision
     pimpl_->client.call("simSetVehiclePose", RpcLibAdapatorsBase::Pose(pose), ignore_collision, vehicle_name);
 }
 
+void RpcLibClientBase::simSetTraceLine(const std::vector<float>& color_rgba, float thickness, const std::string & vehicle_name)
+{
+    pimpl_->client.call("simSetTraceLine", color_rgba, thickness, vehicle_name);
+}
+
 vector<ImageCaptureBase::ImageResponse> RpcLibClientBase::simGetImages(vector<ImageCaptureBase::ImageRequest> request, const std::string& vehicle_name)
 {
     const auto& response_adaptor = pimpl_->client.call("simGetImages", 
@@ -362,6 +367,10 @@ CameraInfo RpcLibClientBase::simGetCameraInfo(const std::string& camera_name, co
 void RpcLibClientBase::simSetCameraOrientation(const std::string& camera_name, const Quaternionr& orientation, const std::string& vehicle_name)
 {
     pimpl_->client.call("simSetCameraOrientation", camera_name, RpcLibAdapatorsBase::Quaternionr(orientation), vehicle_name);
+}
+void RpcLibClientBase::simSetCameraFov(const std::string& camera_name, float fov_degrees, const std::string& vehicle_name)
+{
+    pimpl_->client.call("simSetCameraFov", camera_name, fov_degrees, vehicle_name);
 }
 
 msr::airlib::Kinematics::State RpcLibClientBase::simGetGroundTruthKinematics(const std::string& vehicle_name) const

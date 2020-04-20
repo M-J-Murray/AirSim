@@ -88,6 +88,7 @@ public:
 
     Pose simGetVehiclePose(const std::string& vehicle_name = "") const;
     void simSetVehiclePose(const Pose& pose, bool ignore_collision, const std::string& vehicle_name = "");
+    void simSetTraceLine(const std::vector<float>& color_rgba, float thickness=3.0f, const std::string& vehicle_name = "");
 
     vector<ImageCaptureBase::ImageResponse> simGetImages(vector<ImageCaptureBase::ImageRequest> request, const std::string& vehicle_name = "");
     vector<uint8_t> simGetImage(const std::string& camera_name, ImageCaptureBase::ImageType type, const std::string& vehicle_name = "");
@@ -98,6 +99,7 @@ public:
 
     CameraInfo simGetCameraInfo(const std::string& camera_name, const std::string& vehicle_name = "") const;
     void simSetCameraOrientation(const std::string& camera_name, const Quaternionr& orientation, const std::string& vehicle_name = "");
+    void simSetCameraFov(const std::string& camera_name, float fov_degrees, const std::string& vehicle_name = "");
 
     msr::airlib::Kinematics::State simGetGroundTruthKinematics(const std::string& vehicle_name = "") const;
     msr::airlib::Environment::State simGetGroundTruthEnvironment(const std::string& vehicle_name = "") const;

@@ -122,7 +122,6 @@ RpcLibServerBase::RpcLibServerBase(ApiProvider* api_provider, const std::string&
     pimpl_->server.bind("armDisarm", [&](bool arm, const std::string& vehicle_name) -> bool { 
         return getVehicleApi(vehicle_name)->armDisarm(arm);
     });
-
     pimpl_->server.bind("simGetImages", [&](const std::vector<RpcLibAdapatorsBase::ImageRequest>& request_adapter, const std::string& vehicle_name) -> 
         vector<RpcLibAdapatorsBase::ImageResponse> {
             const auto& response = getVehicleSimApi(vehicle_name)->getImages(RpcLibAdapatorsBase::ImageRequest::to(request_adapter));
@@ -149,6 +148,10 @@ RpcLibServerBase::RpcLibServerBase(ApiProvider* api_provider, const std::string&
     pimpl_->server.bind("simGetVehiclePose", [&](const std::string& vehicle_name) -> RpcLibAdapatorsBase::Pose {
         const auto& pose = getVehicleSimApi(vehicle_name)->getPose();
         return RpcLibAdapatorsBase::Pose(pose);
+    });
+
+    pimpl_->server.bind("simSetTraceLine", [&](const std::vector<float>& color_rgba, float thickness, const std::string& vehicle_name) -> void {
+        getVehicleSimApi(vehicle_name)->setTraceLine(color_rgba, thickness);
     });
 
     pimpl_->server.
@@ -228,6 +231,11 @@ RpcLibServerBase::RpcLibServerBase(ApiProvider* api_provider, const std::string&
     pimpl_->server.bind("simSetCameraOrientation", [&](const std::string& camera_name, const RpcLibAdapatorsBase::Quaternionr& orientation, 
         const std::string& vehicle_name) -> void {
         getVehicleSimApi(vehicle_name)->setCameraOrientation(camera_name, orientation.to());
+    });
+
+    pimpl_->server.bind("simSetCameraFov", [&](const std::string& camera_name, float fov_degrees,
+        const std::string& vehicle_name) -> void {
+        getVehicleSimApi(vehicle_name)->setCameraFoV(camera_name, fov_degrees);
     });
 
     pimpl_->server.bind("simGetCollisionInfo", [&](const std::string& vehicle_name) -> RpcLibAdapatorsBase::CollisionInfo {
